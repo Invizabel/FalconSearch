@@ -83,4 +83,4 @@ def FalconSearch(known_folder,unknown_folder):
 clear()
 known_folder = input("known folder:\n")
 unknown_folder = input("unknown folder:\n")
-falconpy(known_folder,unknown_folder)
+FalconSearch(known_folder,unknown_folder)
