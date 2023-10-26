@@ -4,7 +4,7 @@ import os
 import time
 import cv2
 import face_recognition
-from falconpy import clear
+from FalconSearch.clear import clear
 from moviepy.editor import VideoFileClip
 
 def process_images(_,unknown_folder,known_image_list):
@@ -40,8 +40,8 @@ def FalconSearch(known_folder,unknown_folder):
     # prep work
     home = os.path.expanduser("~")
 
-    if not os.path.exists(f"{home}/lotl_scout_output"):
-        os.makedirs(f"{home}/lotl_scout_output")
+    if not os.path.exists(f"{home}/FalconSearch_output"):
+        os.makedirs(f"{home}/FalconSearch_output")
 
     known_files = os.listdir(known_folder)
     unknown_files = os.listdir(unknown_folder)
@@ -73,7 +73,7 @@ def FalconSearch(known_folder,unknown_folder):
     end = time.time()
     total_time = end - start
     hits = list(set(hits[:]))
-    with open(f"{home}/lotl_scout_output/matches.txt","a") as file:
+    with open(f"{home}/FalconSearch_output/matches.txt","a") as file:
         for hit in hits:
             file.write(hit + "\n")
 
