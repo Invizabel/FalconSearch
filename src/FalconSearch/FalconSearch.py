@@ -9,10 +9,15 @@ from moviepy.editor import VideoFileClip
 
 def process_images(_,unknown_folder,known_image_list):
     global hits
+    home = os.path.expanduser("~")
+
     frame_rate = VideoFileClip(unknown_folder + "/" + _).fps
     duration = int(VideoFileClip(unknown_folder + "/" + _).fps * VideoFileClip(unknown_folder + "/" + _).duration)
     capture = cv2.VideoCapture(unknown_folder + "/" + _)
     frame_position = capture.get(cv2.CAP_PROP_POS_FRAMES)
+    frame_1 = frame_position
+    frame_2 = frame_position
+
     frame_list = []
     while frame_position <= duration:
         flag,frame = capture.read()
@@ -21,14 +26,22 @@ def process_images(_,unknown_folder,known_image_list):
             rgb_frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
             face_locations = face_recognition.face_locations(rgb_frame)
             face_encodings = face_recognition.face_encodings(rgb_frame,face_locations)
+            break_boolean = False
             for face_encoding in face_encodings:
                 for image in known_image_list:
                     result = bool(face_recognition.compare_faces(image,face_encodings)[0])
                     if result:
-                        hits.append(f"{_} | " + str(datetime.timedelta(seconds=int(frame_position / frame_rate))))
-
+                        frame_1 = frame_position
+                        if frame_1 == frame_2:
+                            return None
+                        else:
+                            frame_2 = frame_position
+                        capture.set(cv2.CAP_PROP_POS_FRAMES,frame_position + frame_rate)
+                        with open(f"{home}/FalconSearch_output/{_}-output.txt","a") as file:
+                            file.write(f"{_} | " + str(datetime.timedelta(seconds=int(frame_position / frame_rate))) + "\n")
+                            
         else:
-            capture.set(cv2.CAP_PROP_POS_FRAMES,frame_position-1)
+            capture.set(cv2.CAP_PROP_POS_FRAMES,frame_position - 1)
 
 def FalconSearch(known_folder,unknown_folder):
     global hits
@@ -72,13 +85,10 @@ def FalconSearch(known_folder,unknown_folder):
 
     end = time.time()
     total_time = end - start
-    hits = list(set(hits[:]))
-    with open(f"{home}/FalconSearch_output/matches.txt","a") as file:
-        for hit in hits:
-            file.write(hit + "\n")
 
     print("",end="\n")
-    print("done in " + str(datetime.timedelta(seconds=int(total_time / frame_rate))))
+    clear()
+    print("done in " + str(end - start))
 
 clear()
 known_folder = input("known folder:\n")
