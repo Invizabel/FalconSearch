@@ -38,7 +38,7 @@ def process_images(_,unknown_folder,known_image_list):
                             frame_2 = frame_position
                         capture.set(cv2.CAP_PROP_POS_FRAMES,frame_position + frame_rate)
                         with open(f"{home}/FalconSearch_output/{_}-output.txt","a") as file:
-                            file.write(f"{_} | " + str(datetime.timedelta(seconds=int(frame_position / frame_rate))) + "\n")
+                            file.write(str(datetime.timedelta(seconds=int(frame_position / frame_rate))) + "\n")
                             
         else:
             capture.set(cv2.CAP_PROP_POS_FRAMES,frame_position - 1)
